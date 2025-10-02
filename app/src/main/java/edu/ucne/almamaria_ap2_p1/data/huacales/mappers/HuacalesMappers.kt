@@ -5,17 +5,17 @@ import edu.ucne.almamaria_ap2_p1.domain.huacales.model.Huacales
 
 fun HuacalesEntity.toDomain(): Huacales = Huacales(
     idEntrada = IdEntrada,
-    Fecha = Fecha,
-    NombreCliente = NombreCliente,
-    Cantidad = Cantidad,
-    Precio = Precio
+    fecha = Fecha,
+    nombreCliente = NombreCliente,
+    cantidad = Cantidad,
+    precio = Precio
 )
 
 fun Huacales.toEntity(): HuacalesEntity = HuacalesEntity(
     IdEntrada = idEntrada,
-    Fecha = Fecha,
-    NombreCliente = NombreCliente,
-    Cantidad = Cantidad,
-    Precio = Precio
+    Fecha = fecha,
+    NombreCliente = nombreCliente,
+    Cantidad = cantidad,
+    Precio = precio
 
 )
