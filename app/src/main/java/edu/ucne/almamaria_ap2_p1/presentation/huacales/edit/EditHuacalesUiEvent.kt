@@ -9,4 +9,7 @@ sealed interface EditHuacalesUiEvent {
 
     data object Save: EditHuacalesUiEvent
     data object Delete: EditHuacalesUiEvent
+    data object Cancel : EditHuacalesUiEvent
+
+
 }
