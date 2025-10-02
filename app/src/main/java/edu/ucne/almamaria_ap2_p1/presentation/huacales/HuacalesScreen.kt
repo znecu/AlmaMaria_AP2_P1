@@ -21,6 +21,7 @@ import edu.ucne.almamaria_ap2_p1.presentation.huacales.edit.EditHuacalesUiEvent
 import edu.ucne.almamaria_ap2_p1.presentation.huacales.edit.EditHuacalesViewModel
 import edu.ucne.almamaria_ap2_p1.presentation.huacales.list.ListHuacalesScreen
 import edu.ucne.almamaria_ap2_p1.presentation.huacales.list.ListHucalesViewModel
+import edu.ucne.almamaria_ap2_p1.presentation.huacales.list.ListHuacalesUiEvent
 import edu.ucne.almamaria_ap2_p1.ui.theme.AlmaMaria_AP2_P1Theme
 
 @Composable
@@ -48,6 +49,7 @@ fun HuacalesScreen(
                 FloatingActionButton(
                     onClick = {
                         huacalesIdEdit = null
+                        editViewModel.onEvent(EditHuacalesUiEvent.Reset)
                         editViewModel.onEvent(EditHuacalesUiEvent.Load(null))
                         showEdit = true
                     }
@@ -66,16 +68,20 @@ fun HuacalesScreen(
                 listViewModel = listViewModel,
                 onEditHuacal = { idEntrada ->
                     huacalesIdEdit = idEntrada
+                    editViewModel.onEvent(EditHuacalesUiEvent.Reset)
                     editViewModel.onEvent(EditHuacalesUiEvent.Load(idEntrada))
                     showEdit = true
                 },
                 onCancelEdit = {
                     showEdit = false
                     huacalesIdEdit = null
+                    editViewModel.onEvent(EditHuacalesUiEvent.Reset)
                 },
                 onSaveSuccess = {
                     showEdit = false
                     huacalesIdEdit = null
+                    listViewModel.onEvent(ListHuacalesUiEvent.Load)
+                    editViewModel.onEvent(EditHuacalesUiEvent.Reset)
                 }
             )
         }
@@ -93,7 +99,9 @@ fun HuacalesScreenBody(
 ) {
     if (showEdit) {
         EditHuacalesScreen(
-            viewModel = editViewModel
+            viewModel = editViewModel,
+            onCancel = onCancelEdit,
+            onSaveSuccess = onSaveSuccess
         )
     } else {
         ListHuacalesScreen(

@@ -1,18 +1,9 @@
 package edu.ucne.almamaria_ap2_p1.presentation.huacales.edit
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -23,24 +14,49 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun EditHuacalesScreen(
-    viewModel: EditHuacalesViewModel = hiltViewModel()
+    viewModel: EditHuacalesViewModel = hiltViewModel(),
+    onCancel: () -> Unit = {},
+    onSaveSuccess: () -> Unit = {}
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.saved) {
+        if (state.saved) {
+            onSaveSuccess()
+        }
+    }
+
     EditHuacalesBody(
         state = state,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        onCancel = onCancel
     )
 }
 
 @Composable
 fun EditHuacalesBody(
     state: EditHuacalesUiState,
-    onEvent:(EditHuacalesUiEvent) -> Unit
+    onEvent:(EditHuacalesUiEvent) -> Unit,
+    onCancel: () -> Unit = {}
 ){
     Column(
         modifier = Modifier
             .padding(16.dp)
     ){
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            Text(
+                text = "Fecha: ${state.fecha}",
+                modifier = Modifier.padding(16.dp),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         OutlinedTextField(
             value = state.nombreCliente,
             onValueChange = {onEvent(EditHuacalesUiEvent.NombreChanged(it))},
@@ -49,7 +65,6 @@ fun EditHuacalesBody(
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("input_nombre")
-
         )
         if(state.nombreError != null){
             Text(
@@ -60,27 +75,13 @@ fun EditHuacalesBody(
         Spacer(Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = state.fecha,
-            onValueChange = {onEvent(EditHuacalesUiEvent.FechaChanged(it))},
-            label = {Text("Fecha: ")},
-            enabled = false,
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("input_fecha")
-
-        )
-
-        Spacer(Modifier.height(16.dp))
-
-        OutlinedTextField(
             value = state.cantidad,
             onValueChange = {onEvent(EditHuacalesUiEvent.CantidadChanged(it))},
             label = {Text("Cantidad: ")},
-            isError = state.nombreError != null,
+            isError = state.cantidadError != null,
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("input_cantidad")
-
         )
         if(state.cantidadError != null){
             Text(
@@ -94,11 +95,10 @@ fun EditHuacalesBody(
             value = state.precio,
             onValueChange = {onEvent(EditHuacalesUiEvent.PrecioChanged(it))},
             label = {Text("Precio: ")},
-            isError = state.nombreError != null,
+            isError = state.precioError != null,
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("input_precio")
-
         )
         if(state.precioError != null){
             Text(
@@ -106,15 +106,48 @@ fun EditHuacalesBody(
                 color = MaterialTheme.colorScheme.error
             )
         }
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(24.dp))
 
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            OutlinedButton(
+                onClick = onCancel,
+                enabled = !state.isSaving
+            ) {
+                Text("Cancelar")
+            }
+            Button(
+                onClick = { onEvent(EditHuacalesUiEvent.Save) },
+                enabled = !state.isSaving,
+                modifier = Modifier.testTag("btn_guardar")
+            ) {
+                Text("Guardar")
+            }
+        }
+
+        if (!state.isNew) {
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedButton(
+                onClick = { onEvent(EditHuacalesUiEvent.Delete) },
+                enabled = !state.isDeleting,
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("Eliminar")
+            }
+        }
     }
 }
+
 @Preview
 @Composable
 private fun EditHuacalesBodyPreview(){
     val state = EditHuacalesUiState()
     MaterialTheme {
-        EditHuacalesBody(state = state) { }
+        EditHuacalesBody(state = state, onEvent = {}) { }
     }
 }

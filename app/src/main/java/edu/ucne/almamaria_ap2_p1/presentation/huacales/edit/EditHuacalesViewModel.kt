@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,15 +46,27 @@ class EditHuacalesViewModel @Inject constructor(
             }
             EditHuacalesUiEvent.Save -> onSave()
             EditHuacalesUiEvent.Delete -> onDelete()
-            EditHuacalesUiEvent.Cancel -> {
-                _state.value = EditHuacalesUiState()
-            }
+            EditHuacalesUiEvent.Cancel -> onReset()
+            EditHuacalesUiEvent.Reset -> onReset()
         }
     }
 
+    private fun onReset() {
+        _state.value = EditHuacalesUiState()
+    }
+
     private fun onLoad(id:Int?){
+        onReset()
+
         if (id == null || id == 0){
-            _state.update { it.copy(isNew = true, idEntrada = null) }
+            val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            _state.update {
+                it.copy(
+                    isNew = true,
+                    idEntrada = null,
+                    fecha = dateFormat.format(Date())
+                )
+            }
             return
         }
         viewModelScope.launch {
@@ -64,7 +79,9 @@ class EditHuacalesViewModel @Inject constructor(
                         fecha = huaceles.fecha,
                         nombreCliente = huaceles.nombreCliente,
                         cantidad = huaceles.cantidad.toString(),
-                        precio = huaceles.precio.toString()
+                        precio = huaceles.precio.toString(),
+                        saved = false,
+                        deleted = false
                     )
                 }
             }
@@ -90,20 +107,21 @@ class EditHuacalesViewModel @Inject constructor(
             }
             return
         }
+
         viewModelScope.launch {
             _state.update { it.copy(isSaving = true) }
-            val id = state.value.idEntrada ?: 0
-            val huacales = Huacales(
-                idEntrada = id,
-                nombreCliente = nombreCliente,
-                cantidad = cantidad.toInt(),
-                precio = precio.toDouble(),
-                fecha = fecha
-            )
-            val result = upsertHuacalesUseCase(huacales)
-            result.onSuccess { newId ->
-                _state.value = EditHuacalesUiState()
-            }.onFailure { e ->
+            try {
+                val id = state.value.idEntrada ?: 0
+                val huacales = Huacales(
+                    idEntrada = id,
+                    nombreCliente = nombreCliente,
+                    cantidad = cantidad.toInt(),
+                    precio = precio.toDouble(),
+                    fecha = fecha.ifEmpty { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()) }
+                )
+                upsertHuacalesUseCase(huacales)
+                _state.value = EditHuacalesUiState(saved = true)
+            } catch (e: Exception) {
                 _state.update { it.copy(isSaving = false) }
             }
         }

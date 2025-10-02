@@ -9,7 +9,7 @@ import edu.ucne.almamaria_ap2_p1.data.huacales.local.HuacalesEntity
     entities = [
         HuacalesEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class HuacalesDb: RoomDatabase(){
