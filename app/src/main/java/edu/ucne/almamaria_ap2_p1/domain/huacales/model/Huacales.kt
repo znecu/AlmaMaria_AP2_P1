@@ -4,8 +4,8 @@ import com.google.type.DateTime
 
 data class Huacales(
     val idEntrada: Int = 0,
-    val Fecha: DateTime,
-    val NombreCliente: String = "",
-    val Cantidad: Int,
-    val Precio: Double
+    val fecha: String = "",
+    val nombreCliente: String = "",
+    val cantidad: Int,
+    val precio: Double
 )

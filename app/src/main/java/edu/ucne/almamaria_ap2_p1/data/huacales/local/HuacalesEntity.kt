@@ -9,7 +9,7 @@ import com.google.type.DateTime
 class HuacalesEntity(
     @PrimaryKey(autoGenerate = true)
     val IdEntrada: Int = 0,
-    val Fecha: DateTime,
+    val Fecha: String = "",
     val NombreCliente: String = "",
     val Cantidad: Int,
     val Precio: Double
