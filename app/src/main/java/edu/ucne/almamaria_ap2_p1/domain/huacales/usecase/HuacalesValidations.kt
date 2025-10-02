@@ -20,7 +20,7 @@ fun validateCantidad(value:String): HuacalesValidations{
 
 fun validatePrecio(value: String): HuacalesValidations{
     if(value.isBlank()) return HuacalesValidations(false, "El precio es requerida")
-    val number = value.toIntOrNull()?: return HuacalesValidations(false, "Debe ser un numero entero")
+    val number = value.toDoubleOrNull()?: return HuacalesValidations(false, "Debe ser un numero entero")
     if(number < 0) return HuacalesValidations(false,"Debe ser mayor o igual a 0")
     return HuacalesValidations(true)
 }

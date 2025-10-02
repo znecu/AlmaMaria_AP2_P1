@@ -98,8 +98,22 @@ fun HuacalesCard(
             verticalAlignment = Alignment.CenterVertically
         ){
             Column(modifier = Modifier.weight(1f)){
-                Text(huacales.nombreCliente, style = MaterialTheme.typography.titleMedium)
-
+                Text(
+                    text = huacales.nombreCliente,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "Fecha: ${huacales.fecha}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Cantidad: ${huacales.cantidad}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Precio: $${huacales.precio}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
             TextButton(
                 onClick = onEdit,

@@ -17,7 +17,7 @@ fun EditHuacalesScreen(
     viewModel: EditHuacalesViewModel = hiltViewModel(),
     onCancel: () -> Unit = {},
     onSaveSuccess: () -> Unit = {}
-){
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.saved) {
@@ -36,13 +36,13 @@ fun EditHuacalesScreen(
 @Composable
 fun EditHuacalesBody(
     state: EditHuacalesUiState,
-    onEvent:(EditHuacalesUiEvent) -> Unit,
+    onEvent: (EditHuacalesUiEvent) -> Unit,
     onCancel: () -> Unit = {}
-){
+) {
     Column(
         modifier = Modifier
             .padding(16.dp)
-    ){
+    ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -59,14 +59,14 @@ fun EditHuacalesBody(
 
         OutlinedTextField(
             value = state.nombreCliente,
-            onValueChange = {onEvent(EditHuacalesUiEvent.NombreChanged(it))},
-            label = {Text("Nombre: ")},
+            onValueChange = { onEvent(EditHuacalesUiEvent.NombreChanged(it)) },
+            label = { Text("Nombre: ") },
             isError = state.nombreError != null,
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("input_nombre")
         )
-        if(state.nombreError != null){
+        if (state.nombreError != null) {
             Text(
                 text = state.nombreError,
                 color = MaterialTheme.colorScheme.error
@@ -76,14 +76,14 @@ fun EditHuacalesBody(
 
         OutlinedTextField(
             value = state.cantidad,
-            onValueChange = {onEvent(EditHuacalesUiEvent.CantidadChanged(it))},
-            label = {Text("Cantidad: ")},
+            onValueChange = { onEvent(EditHuacalesUiEvent.CantidadChanged(it)) },
+            label = { Text("Cantidad: ") },
             isError = state.cantidadError != null,
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("input_cantidad")
         )
-        if(state.cantidadError != null){
+        if (state.cantidadError != null) {
             Text(
                 text = state.cantidadError,
                 color = MaterialTheme.colorScheme.error
@@ -93,14 +93,14 @@ fun EditHuacalesBody(
 
         OutlinedTextField(
             value = state.precio,
-            onValueChange = {onEvent(EditHuacalesUiEvent.PrecioChanged(it))},
-            label = {Text("Precio: ")},
+            onValueChange = { onEvent(EditHuacalesUiEvent.PrecioChanged(it)) },
+            label = { Text("Precio: ") },
             isError = state.precioError != null,
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("input_precio")
         )
-        if(state.precioError != null){
+        if (state.precioError != null) {
             Text(
                 text = state.precioError,
                 color = MaterialTheme.colorScheme.error
@@ -119,7 +119,9 @@ fun EditHuacalesBody(
                 Text("Cancelar")
             }
             Button(
-                onClick = { onEvent(EditHuacalesUiEvent.Save) },
+                onClick = {
+                    onEvent(EditHuacalesUiEvent.Save)
+                },
                 enabled = !state.isSaving,
                 modifier = Modifier.testTag("btn_guardar")
             ) {
@@ -145,7 +147,7 @@ fun EditHuacalesBody(
 
 @Preview
 @Composable
-private fun EditHuacalesBodyPreview(){
+private fun EditHuacalesBodyPreview() {
     val state = EditHuacalesUiState()
     MaterialTheme {
         EditHuacalesBody(state = state, onEvent = {}) { }
