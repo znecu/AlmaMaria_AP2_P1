@@ -13,5 +13,5 @@ import edu.ucne.almamaria_ap2_p1.data.huacales.local.HuacalesEntity
     exportSchema = true
 )
 abstract class HuacalesDb: RoomDatabase(){
-    abstract fun HuacalesDb(): HuacalesEntity
+    abstract fun HuacalesDb(): HuacalesDao
 }
