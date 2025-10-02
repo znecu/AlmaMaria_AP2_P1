@@ -43,8 +43,12 @@ class EditHuacalesViewModel @Inject constructor(
             }
             EditHuacalesUiEvent.Save -> onSave()
             EditHuacalesUiEvent.Delete -> onDelete()
+            EditHuacalesUiEvent.Cancel -> {
+                _state.value = EditHuacalesUiState()
+            }
         }
     }
+
     private fun onLoad(id:Int?){
         if (id == null || id == 0){
             _state.update { it.copy(isNew = true, idEntrada = null) }
@@ -66,16 +70,17 @@ class EditHuacalesViewModel @Inject constructor(
             }
         }
     }
+
     private fun onSave(){
         val nombreCliente = state.value.nombreCliente
         val nombreValidations = validateNombre(nombreCliente)
         val cantidad = state.value.cantidad
         val cantidadValidations = validateCantidad(cantidad)
-        val precio = state.value.cantidad
+        val precio = state.value.precio
         val precioValidations = validatePrecio(precio)
         val fecha = state.value.fecha
 
-        if(!nombreValidations.isValid || !cantidadValidations.isValid || precioValidations.isValid){
+        if(!nombreValidations.isValid || !cantidadValidations.isValid || !precioValidations.isValid){
             _state.update {
                 it.copy(
                     nombreError = nombreValidations.error,
@@ -100,17 +105,16 @@ class EditHuacalesViewModel @Inject constructor(
                 _state.value = EditHuacalesUiState()
             }.onFailure { e ->
                 _state.update { it.copy(isSaving = false) }
-
             }
         }
     }
+
     private fun onDelete(){
         val id = state.value.idEntrada ?: return
         viewModelScope.launch {
-            _state.update { it.copy(isSaving = true) }
+            _state.update { it.copy(isDeleting = true) }
             deleteHuacalesUseCase(id)
             _state.update { it.copy(isDeleting = false, deleted = true) }
         }
     }
-
 }
